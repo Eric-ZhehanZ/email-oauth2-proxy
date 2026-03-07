@@ -655,8 +655,9 @@ class Cryptographer:
         (such as stored tokens), and also supports increasing the encryption/decryption iterations (i.e., strength)"""
         self._salt = None
 
-        # token_salt (and iterations, below) can optionally be inherited in, e.g., CCG / service account configurations
-        token_salt = AppConfig.get_option_with_catch_all_fallback(config, username, 'token_salt')
+        # local token encryption settings should always be account-specific to avoid shared-key reuse across catch-all
+        # accounts, which weakens resistance to offline password guessing if config data is exposed
+        token_salt = config.get(username, 'token_salt', fallback=None)
         if token_salt:
             try:
                 self._salt = base64.b64decode(token_salt.encode('utf-8'))  # catch incorrect third-party proxy guide
@@ -668,8 +669,7 @@ class Cryptographer:
             self._salt = os.urandom(16)  # either a failed decode or the initial run when no salt exists
 
         # the iteration count is stored with the credentials, so could if required be user-edited (see PR #198 comments)
-        iterations = int(AppConfig.get_option_with_catch_all_fallback(config, username, 'token_iterations',
-                                                                      fallback=self.LEGACY_ITERATIONS))
+        iterations = int(config.get(username, 'token_iterations', fallback=self.LEGACY_ITERATIONS))
 
         # with MultiFernet each fernet is tried in order to decrypt a value, but encryption always uses the first
         # fernet, so sort unique iteration counts in descending order (i.e., use the best available encryption)
