@@ -73,6 +73,7 @@ This repository includes a minimal `Dockerfile`, `docker-compose.yml` and `.env.
 
 1. Copy `.env.example` to `.env` and adjust ports if required.
 2. Ensure `emailproxy.config` in this directory contains your account/provider settings.
+   If your accounts are not already authorised, complete initial authorisation first (for example by running once without `--no-gui`, or by using `--external-auth`/`--local-server-auth`) so headless mode can authenticate successfully.
 3. Start the container:
 
 ```bash

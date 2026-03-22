@@ -1,12 +1,9 @@
 services:
-  email-oauth2-proxy:
+  emailproxy:
     build:
       context: .
       dockerfile: Dockerfile
     command:
-      - python
-      - emailproxy.py
-      - --no-gui
       - --config-file
       - /config/emailproxy.config
       - --cache-store
