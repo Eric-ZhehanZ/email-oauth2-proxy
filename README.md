@@ -68,6 +68,27 @@ Make sure you keep the proxy running at all times to allow it to authorise your 
 After your accounts are fully set-up and authorised, no further proxy interaction should be required unless your account needs authorising again.
 It will notify you if this is the case.
 
+### Running with Docker and Docker Compose<a id="running-with-docker-and-docker-compose"></a>
+This repository includes a minimal `Dockerfile`, `docker-compose.yml` and `.env.example` for headless deployments.
+
+1. Copy `.env.example` to `.env` and adjust ports if required.
+2. Ensure `emailproxy.config` in this directory contains your account/provider settings.
+3. Start the container:
+
+```bash
+docker compose up -d --build
+```
+
+The compose setup mounts:
+- `./emailproxy.config` to `/config/emailproxy.config` (read-only)
+- a named volume (`emailproxy-data`) to `/data` for token cache and logs
+
+The proxy runs with:
+- `--no-gui`
+- `--config-file /config/emailproxy.config`
+- `--cache-store /data/token-cache.config`
+- `--log-file /data/emailproxy.log`
+
 ### OAuth 2.0 client credentials<a id="oauth-20-client-credentials"></a>
 As part of the proxy setup process you need to provide an OAuth 2.0 `client_id` and (in many cases) a `client_secret` to allow it to authenticate with email servers on your behalf.
 
