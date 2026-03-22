@@ -1,0 +1,23 @@
+services:
+  emailproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - --config-file
+      - /config/emailproxy.config
+      - --cache-store
+      - /data/token-cache.config
+      - --log-file
+      - /data/emailproxy.log
+    ports:
+      - "${IMAP_PORT:-1993}:1993"
+      - "${POP_PORT:-1995}:1995"
+      - "${SMTP_PORT:-1587}:1587"
+    volumes:
+      - ./emailproxy.config:/config/emailproxy.config:ro
+      - emailproxy-data:/data
+    restart: unless-stopped
+
+volumes:
+  emailproxy-data:
